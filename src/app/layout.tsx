@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Manrope, Open_Sans } from "next/font/google";
 import "./globals.css";
+import { TRPCReactProvider } from "@/trpc/react";
+import { ThemeProvider } from "@/app/_components/miscellaneous/theme-provider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const heading = Open_Sans({
+  variable: "--heading",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const paragraph = Manrope({
+  variable: "--paragraph",
   subsets: ["latin"],
 });
 
@@ -25,9 +27,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${heading.variable} ${paragraph.variable} antialiased w-screen min-h-screen relative`}
       >
-        {children}
+        <ThemeProvider defaultTheme="dark" attribute="class">
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
