@@ -10,6 +10,12 @@ import {
   X,
   Pin,
   Ellipsis,
+  LaptopMinimal,
+  Clapperboard,
+  Volleyball,
+  Newspaper,
+  Activity,
+  CircleArrowRight,
 } from "lucide-react";
 
 export const Icons = {
@@ -22,6 +28,13 @@ export const Icons = {
   X,
   Pin,
   Ellipsis,
+  LaptopMinimal,
+  Clapperboard,
+  Volleyball,
+  Newspaper,
+  Activity,
+  CircleArrowRight,
+
   User,
   ThemeIcon: (props: LucideProps) => (
     <svg {...props} width="24" height="24" viewBox="0 0 24 24">

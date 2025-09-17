@@ -142,3 +142,26 @@ export const orgNavbarItems: {
     url: "#",
   },
 ];
+
+export const recommendedList: { title: string; icon: Icon }[] = [
+  {
+    title: "Tech",
+    icon: "LaptopMinimal",
+  },
+  {
+    title: "Sports",
+    icon: "Volleyball",
+  },
+  {
+    title: "News",
+    icon: "Newspaper",
+  },
+  {
+    title: "Health",
+    icon: "Activity",
+  },
+  {
+    title: "Entertainment",
+    icon: "Clapperboard",
+  },
+];
