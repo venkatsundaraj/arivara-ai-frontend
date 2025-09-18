@@ -7,7 +7,7 @@ interface ChatInputProps {}
 
 const ChatInput: FC<ChatInputProps> = ({}) => {
   return (
-    <div className="relative min-w-5xl flex items-center justify-center">
+    <div className="relative w-full md:min-w-5xl flex items-center justify-center">
       <Textarea
         className="w-full border-foreground/60 min-h-[90px]"
         placeholder="Type something..."
