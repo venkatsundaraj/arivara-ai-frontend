@@ -29,6 +29,7 @@ import { Icons } from "@/app/_components/miscellaneous/icons";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/app/_components/ui/button";
 import { Input } from "@/app/_components/ui/input";
+import SigninButton from "@/app/_components/miscellaneous/signin-button";
 
 interface AppSidebarProps {}
 
@@ -104,15 +105,7 @@ export const AppSidebar: FC<AppSidebarProps> = function ({}) {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        <Link
-          href={``}
-          className={cn(buttonVariants({ variant: "ghost" }), "gap-4")}
-        >
-          <Icons.LogIn className="w-20" />
-          <span className="text-extra-subtitle-heading text-foreground leading-normal tracking-normal font-paragraph">
-            Login
-          </span>
-        </Link>
+        <SigninButton />
       </SidebarFooter>
     </Sidebar>
   );

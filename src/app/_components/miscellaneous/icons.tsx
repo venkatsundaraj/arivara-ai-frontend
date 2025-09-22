@@ -16,6 +16,7 @@ import {
   Newspaper,
   Activity,
   CircleArrowRight,
+  LoaderCircle,
 } from "lucide-react";
 
 export const Icons = {
@@ -34,6 +35,7 @@ export const Icons = {
   Newspaper,
   Activity,
   CircleArrowRight,
+  LoaderCircle,
 
   User,
   ThemeIcon: (props: LucideProps) => (
