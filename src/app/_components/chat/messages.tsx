@@ -50,21 +50,21 @@ const Messages: FC<MessagesProps> = ({ messages, isStreaming = false }) => {
           }
           return updated;
         });
-      }, 20); // Adjust speed here (lower = faster)
+      }, 5); // Adjust speed here (lower = faster)
 
       return () => clearTimeout(timer);
     }
   }, [displayedMessages, messages]);
 
   return (
-    <div className="w-full flex-1 overflow-y-scroll scrollbar-hide">
+    <div className="w-full flex-1 overflow-y-scroll scrollbar-hide max-h-[88vh]">
       <ul className="w-full flex flex-col items-center justify-center gap-8">
         {displayedMessages.map((item, i) => (
-          <li key={item.id || i} className="flex w-full flex-col gap-6">
-            <p className="self-end px-4 py-2 bg-background rounded-lg border border-primary text-primary font-paragraph leading-normal tracking-tight">
+          <li key={i} className="flex w-full flex-col gap-6">
+            <p className="self-end px-4 py-2 text-subtitle-heading rounded-lg border border-primary text-primary bg-white font-paragraph leading-normal tracking-tight">
               {item.text}
             </p>
-            <p className="self-start px-6 py-2 bg-primary rounded-lg text-background font-paragraph leading-normal tracking-normal max-w-[80%]">
+            <p className="self-start px-6 py-2 bg-primary text-subtitle-heading rounded-lg text-white font-paragraph leading-normal tracking-normal max-w-[80%]">
               {item.displayedResponse}
               {item.displayedResponse.length < item.response.length && (
                 <span className="inline-block w-1 h-4 bg-background ml-1 animate-pulse" />
