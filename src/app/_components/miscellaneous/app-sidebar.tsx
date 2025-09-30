@@ -44,7 +44,7 @@ export const AppSidebar: FC<AppSidebarProps> = function ({}) {
           arivara.ai
         </Link>
         <Link
-          href={``}
+          href={`/`}
           className={cn(
             buttonVariants({ variant: "default" }),
             "hover:bg-primary/90 text-white hover:text-white"

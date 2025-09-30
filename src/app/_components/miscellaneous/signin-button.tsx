@@ -9,7 +9,7 @@ interface SigninButtonProps {}
 
 const SigninButton: FC<SigninButtonProps> = ({}) => {
   const { data: session, status } = useSession();
-  console.log(session);
+
   if (status === "loading")
     return (
       <Button className={cn(buttonVariants({ variant: "outline" }), "gap-4")}>

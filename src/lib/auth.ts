@@ -17,8 +17,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: env.NEXT_AUTH_SECRET,
   callbacks: {
     async session({ session, token }) {
-      console.log("Session Callback - token:", token);
-      console.log("Session Callback - session before:", session);
+      // console.log("Session Callback - token:", token);
+      // console.log("Session Callback - session before:", session);
 
       if (token?.id && session?.user) {
         session.user.id = token.id;
@@ -27,7 +27,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.image = token.picture || session.user.image;
       }
 
-      console.log("Session Callback - session after:", session);
+      // console.log("Session Callback - session after:", session);
       return session;
     },
     async jwt({ token, user, account }) {
@@ -37,7 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user?.email) {
         token.email = user.email;
       }
-      console.log("JWT Callback - token:", token);
+      // console.log("JWT Callback - token:", token);
       return token;
     },
 

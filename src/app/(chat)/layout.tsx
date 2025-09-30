@@ -12,7 +12,7 @@ const layout = async ({ children }: layoutProps) => {
     <DashboardProvider>
       <SidebarProvider>
         <AppSidebar />
-        <main className="w-full bg-background">
+        <main className="w-full bg-background flex flex-col items-center justify-start">
           <nav className="w-full ">
             <div className="flex items-center justify-between py-4 px-8">
               <SidebarTrigger />
