@@ -1,24 +1,47 @@
-import { FC } from "react";
+"use client";
+
+import { FC, useActionState, useEffect } from "react";
+import { useFormState } from "react-dom";
 import { Textarea } from "@/app/_components/ui/textarea";
 import { Button } from "../ui/button";
 import { Icons } from "../miscellaneous/icons";
+import { chatInputHandler } from "@/actions/chat-input";
+import { redirect } from "next/navigation";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-interface ChatInputProps {}
+const initialState = { success: false };
 
-const ChatInput: FC<ChatInputProps> = ({}) => {
+interface PageProps {}
+
+const ChatInput: FC<PageProps> = () => {
+  const router = useRouter();
+  const [state, formAction] = useActionState(chatInputHandler, initialState);
+
+  useEffect(() => {
+    if (state.success) {
+      router.push("/chat/pyEexLWAR8CyLNtvI");
+    }
+    if (!state.success) {
+      toast.error("Please authenticate before typing something");
+    }
+  }, [state, router]);
+
   return (
-    <div className="relative w-full md:min-w-5xl flex items-center justify-center">
+    <form action={formAction} className="relative w-full flex items-center">
       <Textarea
         className="w-full border-foreground/60 min-h-[90px]"
         placeholder="Type something..."
+        name="chat"
       />
       <Button
-        size={"xl"}
-        className="absolute top-1/2 cursor-pointer -translate-y-1/2 right-[10px] md:right-[20px] hover:bg-primary/90 w-12 h-12 !p-0 rounded-full"
+        size="xl"
+        type="submit"
+        className="absolute bg-primary hover:bg-primary top-1/2 -translate-y-1/2 right-[10px] rounded-full"
       >
         <Icons.CircleArrowRight className="stroke-white w-16 scale-105" />
       </Button>
-    </div>
+    </form>
   );
 };
 
