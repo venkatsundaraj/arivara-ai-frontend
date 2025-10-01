@@ -57,7 +57,7 @@ const ChatInputTrpc: FC<PageProps> = ({ mode, chatId }) => {
   const createId = api.chat.createChat.useMutation({
     onSuccess: (data) => {
       if (mode === "create") {
-        toast.success("New chat has been created");
+        toast.success("New chat has been created", { position: "top-center" });
         // console.log(data, "create");
         if (data.chatId) {
           router.push(`/chat/${data.chatId}`);
@@ -81,7 +81,7 @@ const ChatInputTrpc: FC<PageProps> = ({ mode, chatId }) => {
       reset();
     },
     onError: (err) => {
-      toast.error(err.message);
+      toast.error(err.message, { position: "top-center" });
     },
   });
 
