@@ -22,9 +22,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       if (token?.id && session?.user) {
         session.user.id = token.id;
-        session.user.email = token.email || session.user.email;
-        session.user.name = token.name || session.user.name;
-        session.user.image = token.picture || session.user.image;
+        session.user.email = token.email;
+        session.user.name = token.name;
+        session.user.image = token.picture;
       }
 
       // console.log("Session Callback - session after:", session);
