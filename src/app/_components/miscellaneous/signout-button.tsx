@@ -17,7 +17,7 @@ const SignoutButton: FC<SignoutButtonProps> = ({}) => {
         "gap-4 no-underline p-0 bg-transparent cursor-pointer h-[initial] text-primary hover:bg-inherit hover:no-underline"
       )}
     >
-      <span className="text-subtitle-heading text-foreground leading-normal tracking-normal font-paragraph">
+      <span className="text-extra-subtitle-heading text-foreground leading-normal tracking-normal font-paragraph">
         Signout
       </span>
     </Button>

@@ -1,4 +1,5 @@
 import ChatDashboardProviders from "@/app/_components/providers/chat-dashboard-providers";
+import SettingsLayout from "@/app/_components/settings/settings-layout";
 import React, { FC } from "react";
 
 interface layoutProps {
@@ -6,7 +7,11 @@ interface layoutProps {
 }
 
 const layout: FC<layoutProps> = ({ children }) => {
-  return <ChatDashboardProviders>{children}</ChatDashboardProviders>;
+  return (
+    <ChatDashboardProviders>
+      <SettingsLayout>{children}</SettingsLayout>
+    </ChatDashboardProviders>
+  );
 };
 
 export default layout;

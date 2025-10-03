@@ -16,12 +16,15 @@ import {
   Newspaper,
   Activity,
   CircleArrowRight,
+  ChevronLeft,
+  Command,
   LoaderCircle,
 } from "lucide-react";
 
 export const Icons = {
   Check,
   LayoutDashboard,
+  ChevronLeft,
   BookOpenCheck,
   BookCheck,
   LogIn,
@@ -34,6 +37,7 @@ export const Icons = {
   Volleyball,
   Newspaper,
   Activity,
+  Command,
   CircleArrowRight,
   LoaderCircle,
 

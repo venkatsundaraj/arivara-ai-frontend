@@ -29,6 +29,7 @@ const SigninButton: FC<SigninButtonProps> = ({}) => {
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
   useEffect(() => {
+    console.log(session?.user);
     setIsMounted(true);
     if (session?.user) {
     }
@@ -43,7 +44,7 @@ const SigninButton: FC<SigninButtonProps> = ({}) => {
   return session ? (
     <div className="w-full flex flex-row items-center justify-between">
       <div className="flex items-center justify-start gap-2.5">
-        {session.user && session.user.image ? (
+        {session.user.image ? (
           <img
             src={session.user.image}
             alt={"user profile"}
@@ -61,15 +62,18 @@ const SigninButton: FC<SigninButtonProps> = ({}) => {
           <Icons.Ellipsis className="cursor-pointer stroke-1 stroke-foreground" />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="border-[0.5px] cursor-pointer">
-          <DropdownMenuItem className="cursor-pointer" asChild>
+          <DropdownMenuItem
+            className="cursor-pointer text-extra-subtitle-heading"
+            asChild
+          >
             <Link
-              className="font-normal text-subtitle-heading text-foreground"
-              href={"/settings/subscription"}
+              className="font-normal text-extra-subtitle-heading text-foreground"
+              href={"/settings/account"}
             >
               Profile
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer">
+          <DropdownMenuItem className="cursor-pointer text-extra-subtitle-heading">
             <SignoutButton />
           </DropdownMenuItem>
         </DropdownMenuContent>

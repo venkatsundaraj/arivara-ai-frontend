@@ -28,7 +28,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${heading.variable} ${paragraph.variable} antialiased w-screen min-h-screen relative`}
+        className={`${heading.variable} ${paragraph.variable} antialiased bg-background w-screen min-h-screen relative`}
       >
         <SessionProvider>
           <ThemeProvider defaultTheme="dark" attribute="class">

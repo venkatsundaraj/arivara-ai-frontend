@@ -165,3 +165,26 @@ export const recommendedList: { title: string; icon: Icon }[] = [
     icon: "Clapperboard",
   },
 ];
+
+export const settingsLink: { title: string; link: string }[] = [
+  {
+    title: "Account",
+    link: "/account",
+  },
+  {
+    title: "Customisation",
+    link: "/customisation",
+  },
+  {
+    title: "Models",
+    link: "/models",
+  },
+  {
+    title: "History",
+    link: "/history",
+  },
+  {
+    title: "Contact",
+    link: "/contact-us",
+  },
+];
