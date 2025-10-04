@@ -9,7 +9,7 @@ interface pageProps {}
 const page = async ({}: pageProps) => {
   const data = await api.post.hello({ text: "venkat" });
 
-  console.log(data);
+  console.log(data, "data");
   return (
     <>
       <section className="h-[90%] w-full flex flex-col gap-6 items-center justify-center bg-background">
