@@ -1,6 +1,6 @@
 "use client";
 import { FC, useEffect, useState } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
+
 import { Button, buttonVariants } from "@/app/_components/ui/button";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/app/_components/miscellaneous/icons";
@@ -21,19 +21,27 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import SignoutButton from "@/app/_components/miscellaneous/signout-button";
+import { signIn, useSession } from "@/lib/auth-client";
 
 interface SigninButtonProps {}
 
 const SigninButton: FC<SigninButtonProps> = ({}) => {
-  const { data: session, status } = useSession();
+  const { data } = useSession();
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log(session?.user);
     setIsMounted(true);
-    if (session?.user) {
+    if (data?.user) {
     }
-  }, [isMounted, session]);
+  }, [isMounted, data]);
+
+  const loginHandler = async function () {
+    const { data } = await signIn.social({
+      provider: "google",
+      callbackURL: "/",
+    });
+    console.log("clicked data", data);
+  };
 
   if (!isMounted || status === "loading")
     return (
@@ -41,18 +49,18 @@ const SigninButton: FC<SigninButtonProps> = ({}) => {
         <Icons.LoaderCircle className="w-20 animate-spin stroke-foreground" />
       </Button>
     );
-  return session ? (
+  return data ? (
     <div className="w-full flex flex-row items-center justify-between">
       <div className="flex items-center justify-start gap-2.5">
-        {session.user.image ? (
+        {data.user.image ? (
           <img
-            src={session.user.image}
+            src={data.user.image}
             alt={"user profile"}
             className="w-8 h-8 rounded-full"
           />
         ) : null}
         <span className="text-subtitle-heading text-foreground font-heading font-normal">
-          {session.user.name}
+          {data.user.name}
         </span>
       </div>
       <DropdownMenu>
@@ -81,7 +89,7 @@ const SigninButton: FC<SigninButtonProps> = ({}) => {
     </div>
   ) : (
     <Button
-      onClick={() => signIn("google")}
+      onClick={loginHandler}
       className={cn(buttonVariants({ variant: "outline" }), "gap-4")}
     >
       <Icons.LogIn className="w-20" />

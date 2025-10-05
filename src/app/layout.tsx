@@ -3,7 +3,6 @@ import { Geist, Geist_Mono, Manrope, Open_Sans } from "next/font/google";
 import "./globals.css";
 import { TRPCReactProvider } from "@/trpc/react";
 import { ThemeProvider } from "@/app/_components/miscellaneous/theme-provider";
-import { SessionProvider } from "next-auth/react";
 
 const heading = Open_Sans({
   variable: "--heading",
@@ -30,11 +29,9 @@ export default async function RootLayout({
       <body
         className={`${heading.variable} ${paragraph.variable} antialiased bg-background w-screen min-h-screen relative`}
       >
-        <SessionProvider>
-          <ThemeProvider defaultTheme="dark" attribute="class">
-            <TRPCReactProvider>{children}</TRPCReactProvider>
-          </ThemeProvider>
-        </SessionProvider>
+        <ThemeProvider defaultTheme="dark" attribute="class">
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

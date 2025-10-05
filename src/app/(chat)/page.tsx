@@ -3,6 +3,9 @@ import RecommendedTopics from "@/app/_components/chat/recommended-topics";
 import { Toaster } from "../_components/miscellaneous/sonner";
 import { api } from "@/trpc/server";
 import ChatInputTrpc from "@/app/_components/chat/chat-input-trpc";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
+
+import ChatInputWrap from "../_components/chat/chat-input-wrap";
 
 interface pageProps {}
 
@@ -18,7 +21,7 @@ const page = async ({}: pageProps) => {
           <h1 className="text-secondary-heading text-center text-foreground font-semibold leading-normal tracking-wide font-heading mb-8">
             What's on your mind today?
           </h1>
-          <ChatInputTrpc mode="create" />
+          <ChatInputWrap />
           <RecommendedTopics />
         </div>
       </section>

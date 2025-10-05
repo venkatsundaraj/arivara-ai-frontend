@@ -9,6 +9,7 @@ import {
 import { inputValidatorSchema } from "@/lib/validation/input-validator";
 import { auth } from "@/lib/auth";
 import { TRPCError } from "@trpc/server";
+import { UIMessage } from "ai";
 
 const data: { id: string; text: string; response: string }[] = [
   {
@@ -20,6 +21,42 @@ const data: { id: string; text: string; response: string }[] = [
 ];
 const defResponse =
   "Lorem Ipsum is simply dummy text of the printing and tca galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
+
+export type Metadata = {
+  userMessage: string;
+  // attachments: Array<TAttachment>; // I have to find a way to incorpoate this
+  // tweets: PayloadTweet[];
+};
+
+export type MyUIMessage = UIMessage<
+  Metadata,
+  {
+    "main-response": {
+      text: string;
+      status: "steaming" | "completed";
+    };
+    "tool-output": {
+      text: string;
+      index: number;
+      status: "steaming" | "completed" | "processing";
+    };
+    // writeTweet:{
+    //   status:'processing'
+    // }
+  },
+  {
+    readableWebsiteContent: {
+      input: {
+        website_url: string;
+      };
+      output: {
+        url: string;
+        title: string;
+        content: string;
+      };
+    };
+  }
+>;
 
 export const chatRouter = createTRPCRouter({
   hello: publicProcedure
@@ -72,4 +109,11 @@ export const chatRouter = createTRPCRouter({
     console.log("server", data);
     return data;
   }),
+
+  //actual app
+  chat: privateProcedure
+    .input(z.object({ messages: z.any(), id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      console.log(input, "input");
+    }),
 });

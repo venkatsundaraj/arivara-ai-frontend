@@ -4,10 +4,10 @@ import { defineConfig } from "drizzle-kit";
 import { env } from "@/env";
 
 export default defineConfig({
-  schema: "./src/server/db/schema.ts",
+  schema: "./src/server/db/schema",
   dialect: "postgresql",
   dbCredentials: {
     url: env.DATABASE_URL,
   },
-  tablesFilter: ["acceltop_lms*"],
+  tablesFilter: ["arivara_ai*"],
 }) satisfies Config;

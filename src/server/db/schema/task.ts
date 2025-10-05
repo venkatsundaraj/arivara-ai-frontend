@@ -10,7 +10,7 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core";
 
-export const createTable = pgTableCreator((name) => `arivara_${name}`);
+export const createTableForTasks = pgTableCreator((name) => `arivara_${name}`);
 
 export const tasks = pgTable("tasks", {
   id: text("id").primaryKey(),

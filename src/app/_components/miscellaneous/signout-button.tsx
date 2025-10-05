@@ -1,17 +1,27 @@
 "use client";
 
 import { FC } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
 import { Button, buttonVariants } from "@/app/_components/ui/button";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 import { Icons } from "@/app/_components/miscellaneous/icons";
+import { authClient } from "@/lib/auth-client";
 
 interface SignoutButtonProps {}
 
 const SignoutButton: FC<SignoutButtonProps> = ({}) => {
+  const router = useRouter();
   return (
     <Button
-      onClick={() => signOut()}
+      onClick={async () => {
+        await authClient.signOut({
+          fetchOptions: {
+            onSuccess: () => {
+              router.push("/"); // Redirect to the login page
+            },
+          },
+        });
+      }}
       className={cn(
         buttonVariants({ variant: "link" }),
         "gap-4 no-underline p-0 bg-transparent cursor-pointer h-[initial] text-primary hover:bg-inherit hover:no-underline"

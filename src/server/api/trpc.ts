@@ -99,6 +99,10 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 const isAuth = t.middleware(async (opts) => {
   const user = await getCurrentUser();
 
+  if (!user) {
+    throw new Error("Something went wrong");
+  }
+
   return opts.next({
     ctx: {
       ...user,

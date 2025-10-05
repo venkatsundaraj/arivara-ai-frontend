@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 
 interface AccountProviderProps {
   children: React.ReactNode;
@@ -21,7 +21,7 @@ export const AccountContext = createContext<{
 } | null>(null);
 
 const AccountProvider = ({ children }: AccountProviderProps) => {
-  const { data, status } = useSession();
+  const { data } = useSession();
 
   return (
     <AccountContext.Provider
