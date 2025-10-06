@@ -6,14 +6,18 @@ import ChatInputTrpc from "@/app/_components/chat/chat-input-trpc";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 
 import ChatInputWrap from "../_components/chat/chat-input-wrap";
+import { redis } from "@/lib/redis";
 
 interface pageProps {}
 
 const page = async ({}: pageProps) => {
   const data = await api.post.hello({ text: "venkat" });
 
-  console.log(data, "data");
-  console.log(data, "data One");
+  redis.set(
+    `user:${Math.random().toFixed(2)}`,
+    JSON.stringify({ hello: "venkat" }),
+    { ex: 3600 }
+  );
   return (
     <>
       <section className="h-[90%] w-full flex flex-col gap-6 items-center justify-center bg-background">

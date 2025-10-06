@@ -10,6 +10,7 @@ import { inputValidatorSchema } from "@/lib/validation/input-validator";
 import { auth } from "@/lib/auth";
 import { TRPCError } from "@trpc/server";
 import { UIMessage } from "ai";
+import { getCurrentUser } from "@/lib/session";
 
 const data: { id: string; text: string; response: string }[] = [
   {
@@ -70,7 +71,7 @@ export const chatRouter = createTRPCRouter({
   createChat: publicProcedure
     .input(inputValidatorSchema)
     .mutation(async ({ input, ctx }) => {
-      const session = await auth();
+      const session = await getCurrentUser();
       if (!session?.user) {
         throw new TRPCError({
           code: "UNAUTHORIZED",

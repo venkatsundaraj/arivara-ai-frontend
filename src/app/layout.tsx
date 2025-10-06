@@ -25,11 +25,16 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${heading.variable} ${paragraph.variable} antialiased bg-background w-screen min-h-screen relative`}
       >
-        <ThemeProvider defaultTheme="dark" attribute="class">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </ThemeProvider>
       </body>
