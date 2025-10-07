@@ -102,12 +102,16 @@ const ChatInputBox: FC<ChatInputBoxProps> = ({ onSubmit }) => {
 export { ChatInputBox };
 
 export const ChatInputLexical = function () {
-  const { sendMessage } = useChatContext();
+  const { sendMessage, ...res } = useChatContext();
   const handleSubmit = useCallback(async function (text: string) {
     if (!text.trim()) return;
 
     sendMessage({ text: text });
   }, []);
+
+  useEffect(() => {
+    console.log(res);
+  }, [res]);
   return (
     <div className="w-full">
       <ChatInputBox onSubmit={handleSubmit} />

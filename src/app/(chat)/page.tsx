@@ -10,12 +10,6 @@ interface pageProps {}
 const page = async ({}: pageProps) => {
   const data = await api.post.hello({ text: "venkat" });
 
-  redis.set(
-    `user:${Math.random().toFixed(2)}`,
-    JSON.stringify({ hello: "venkat" }),
-    { ex: 3600 }
-  );
-
   return (
     <>
       <section className="h-[90%] w-full flex flex-col gap-6 items-center justify-center bg-background">

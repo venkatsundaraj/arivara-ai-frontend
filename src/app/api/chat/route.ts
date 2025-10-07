@@ -9,6 +9,7 @@ import { env } from "@/env";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText, convertToModelMessages, streamText } from "ai";
+import { XmlPrompt } from "@/lib/xml-prompt";
 
 const messageSchema = z.object({
   message: z.any(),
@@ -37,11 +38,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
     const { id, message } = data as { id: string; message: MyUIMessage };
     console.log(id, message);
 
+    //ratelimiter
     const limiter =
       session?.user.plan === "pro"
         ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(40, "4h") })
         : new Ratelimit({ redis, limiter: Ratelimit.fixedWindow(5, "1d") });
 
+    //getting the necessary functions
     const [account, history, limitResult] = await Promise.all([
       getAccount(session.user.email),
       redis.get<MyUIMessage[]>(`chat:history:${id}`),
@@ -67,6 +70,18 @@ export async function POST(req: NextRequest, res: NextResponse) {
         throw new Error("No account connected");
       }
     }
+
+    const userContent = message.parts.reduce(
+      (acc, cur) => (cur.type === "text" ? acc + cur.text : ""),
+      ""
+    );
+
+    const content = new XmlPrompt();
+
+    const resultOne = content.tag("message", userContent);
+
+    console.log(content, resultOne);
+
     const messages = [...(history ?? []), message];
 
     const result = await generateText({
@@ -74,7 +89,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       messages: convertToModelMessages(messages),
     });
 
-    console.log(result.text); // This will log the actual text
+    // console.log(result.text); // This will log the actual text
 
     return NextResponse.json({ text: result.text });
   } catch (err) {

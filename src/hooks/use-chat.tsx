@@ -47,6 +47,7 @@ export const ChatProvider = function ({
     onError: ({ message }) => {
       toast.error(message);
     },
+
     // onError: ({ message }) => {
     //   console.log(message);
     //   toast.error(message);

@@ -32,6 +32,7 @@ const page: FC<pageProps> = ({}) => {
         {orgNavbarItems.map((item, i) => {
           return (
             <Link
+              key={i}
               href={item.url}
               className="text-extra-paragraph-heading  cursor-pointer menu-item-group flex items-center w-full  px-3 justify-between font-paragraph text-foreground leading-normal tracking-wide"
             >

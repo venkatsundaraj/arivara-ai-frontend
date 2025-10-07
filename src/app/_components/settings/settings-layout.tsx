@@ -1,18 +1,19 @@
 import { FC } from "react";
 import SettingsHeader from "./settings-header";
-import { useSession } from "next-auth/react";
+
 import { auth } from "@/lib/auth";
 import { Slider } from "../ui/slider";
 import Link from "next/link";
 import SettingsNavbar from "./settings-navbar";
 import { Icons } from "../miscellaneous/icons";
+import { getCurrentUser } from "@/lib/session";
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
 }
 
 const SettingsLayout = async ({ children }: SettingsLayoutProps) => {
-  const session = await auth();
+  const session = await getCurrentUser();
   // console.log(session);
 
   return (
