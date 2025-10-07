@@ -38,12 +38,15 @@ export const ChatProvider = function ({
   const chatProps = useChat<MyUIMessage>({
     id: chatId,
     transport: new DefaultChatTransport({
-      api: "api/chat",
+      api: "/api/chat",
       prepareSendMessagesRequest({ messages, id }) {
         return { body: { message: messages[messages.length - 1], id } };
       },
     }),
     messages: [],
+    onError: ({ message }) => {
+      toast.error(message);
+    },
     // onError: ({ message }) => {
     //   console.log(message);
     //   toast.error(message);

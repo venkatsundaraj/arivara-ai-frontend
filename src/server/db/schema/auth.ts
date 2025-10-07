@@ -3,7 +3,9 @@ import {
   text,
   timestamp,
   boolean,
+  json,
   pgTableCreator,
+  integer,
 } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator((name) => `arivara_${name}`);
@@ -23,6 +25,11 @@ export const user = createTable("user", {
   organizationId: text("organization_id"),
   userStatus: text("user_status"),
   signupSource: text("signup_source"),
+  plan: text("plan", { enum: ["free", "pro"] }),
+  stripeId: text("stripe_id").unique(),
+  hadTrial: boolean("had_trial").default(false),
+  goals: json("goals").$type<string[]>().default([]),
+  frequency: integer("frequency"),
 });
 
 export const session = createTable("session", {
@@ -71,3 +78,6 @@ export const verification = createTable("verification", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
+
+export type Account = typeof account.$inferSelect;
+export type User = typeof user.$inferSelect;

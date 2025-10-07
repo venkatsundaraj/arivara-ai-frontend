@@ -9,6 +9,10 @@ export const getCurrentUser = async function () {
       headers: await headers(),
     });
 
+    if (!data) {
+      throw new Error("you should authenticate");
+    }
+
     return data;
   } catch (err) {
     console.log(err);

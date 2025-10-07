@@ -1,12 +1,9 @@
-import ChatInput from "@/app/_components/chat/chat-input";
 import RecommendedTopics from "@/app/_components/chat/recommended-topics";
-import { Toaster } from "../_components/miscellaneous/sonner";
 import { api } from "@/trpc/server";
-import ChatInputTrpc from "@/app/_components/chat/chat-input-trpc";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import { Toaster } from "../_components/miscellaneous/sonner";
 
-import ChatInputWrap from "../_components/chat/chat-input-wrap";
 import { redis } from "@/lib/redis";
+import ChatInputWrap from "../_components/chat/chat-input-wrap";
 
 interface pageProps {}
 
@@ -18,6 +15,7 @@ const page = async ({}: pageProps) => {
     JSON.stringify({ hello: "venkat" }),
     { ex: 3600 }
   );
+
   return (
     <>
       <section className="h-[90%] w-full flex flex-col gap-6 items-center justify-center bg-background">

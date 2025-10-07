@@ -26,15 +26,11 @@ const initialConfig = {
 
 const ChatInputWrap: FC<ChatInputWrapProps> = ({}) => {
   return (
-    <EditorProvider>
-      <ChatProvider>
-        <ThemeProvider>
-          <LexicalComposer initialConfig={initialConfig}>
-            <ChatInputLexical />
-          </LexicalComposer>
-        </ThemeProvider>
-      </ChatProvider>
-    </EditorProvider>
+    <ThemeProvider>
+      <LexicalComposer initialConfig={initialConfig}>
+        <ChatInputLexical />
+      </LexicalComposer>
+    </ThemeProvider>
   );
 };
 

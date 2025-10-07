@@ -1,4 +1,6 @@
 import { auth } from "@/lib/auth";
+import { useSession } from "@/lib/auth-client";
+import { getCurrentUser } from "@/lib/session";
 import { notFound } from "next/navigation";
 import { FC } from "react";
 
@@ -9,7 +11,7 @@ interface ChatDashboardProvidersProps {
 const ChatDashboardProviders = async ({
   children,
 }: ChatDashboardProvidersProps) => {
-  const session = await auth();
+  const session = await getCurrentUser();
 
   if (!session?.user) {
     notFound();
