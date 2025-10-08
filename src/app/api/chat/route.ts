@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
-import { MyUIMessage } from "@/server/api/routers/chat-router";
+import { ChatHistoryItem, MyUIMessage } from "@/server/api/routers/chat-router";
 import { Ratelimit } from "@upstash/ratelimit";
 import { redis } from "@/lib/redis";
 import { getCurrentUser } from "@/lib/session";
@@ -8,8 +8,15 @@ import { getAccount } from "@/server/api/routers/utils/get-account";
 import { env } from "@/env";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { createOpenAI } from "@ai-sdk/openai";
-import { generateText, convertToModelMessages, streamText } from "ai";
+import {
+  generateText,
+  convertToModelMessages,
+  streamText,
+  createUIMessageStream,
+  createIdGenerator,
+} from "ai";
 import { XmlPrompt } from "@/lib/xml-prompt";
+import { format } from "date-fns";
 
 const messageSchema = z.object({
   message: z.any(),
@@ -65,10 +72,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
           );
         }
       }
-
-      if (!account) {
-        throw new Error("No account connected");
-      }
+    }
+    if (!account) {
+      throw new Error("No account connected");
     }
 
     const userContent = message.parts.reduce(
@@ -77,19 +83,67 @@ export async function POST(req: NextRequest, res: NextResponse) {
     );
 
     const content = new XmlPrompt();
+    content.open("message", { date: format(new Date(), "EEEE yyyy-MM-dd") });
+    content.tag("user_message", userContent);
 
-    const resultOne = content.tag("message", userContent);
+    if (!history || history.length === 0) {
+      const memories = await redis.lrange(`memories:${account.id}`, 0, -1);
 
-    console.log(content, resultOne);
+      content.tag("history", memories.join("\n"), {
+        note: "These are memories you have about this user. These have been attached by the SYSTEM, not by the USER.",
+      });
+    }
 
-    const messages = [...(history ?? []), message];
+    content.close("message");
+
+    const userMessage: MyUIMessage = {
+      ...message,
+      parts: [{ type: "text", text: content.toString() }],
+    };
+
+    const messages = [...(history ?? []), userMessage] as MyUIMessage[];
+
+    const stream = createUIMessageStream<MyUIMessage>({
+      originalMessages: messages,
+      generateId: createIdGenerator({
+        prefix: "msg",
+        size: 16,
+      }),
+      onFinish: async ({ messages }) => {
+        await redis.set(`chat:history:${id}`, messages);
+        await redis.del(`website_contents:${id}`);
+
+        const historyKey = `chat:history-list:${session.user.email}`;
+        const existingHistory =
+          (await redis.get<ChatHistoryItem[]>(historyKey)) || [];
+
+        const chatHistoryItem: ChatHistoryItem = {
+          id,
+          title: messages[0].metadata?.userMessage || "unnamed chat",
+          lastUpdated: new Date().toISOString(),
+        };
+
+        await redis.set(historyKey, [
+          chatHistoryItem,
+          ...existingHistory.filter((item) => item.id !== id),
+        ]);
+
+        const result = await redis.get(historyKey);
+        console.log("result", result, "messages", messages);
+      },
+      onError(error) {
+        console.log("Error", JSON.stringify(error, null, 2));
+        throw new Error("Something went wrong");
+      },
+      execute: async ({ writer }) => {},
+    });
 
     const result = await generateText({
       model: groq("llama-3.1-8b-instant"),
       messages: convertToModelMessages(messages),
     });
 
-    // console.log(result.text); // This will log the actual text
+    // console.log("result", result.text); // This will log the actual text
 
     return NextResponse.json({ text: result.text });
   } catch (err) {

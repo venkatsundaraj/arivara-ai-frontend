@@ -31,7 +31,7 @@ export class XmlPrompt {
   }
 
   toString() {
-    this.parts.join("\n");
+    return this.parts.join("\n");
   }
 
   private buildAttributes(attrs?: Record<string, string | number>): string {

@@ -36,7 +36,7 @@ export const ChatProvider = function ({
   }, []);
 
   const chatProps = useChat<MyUIMessage>({
-    id: chatId,
+    id: "hello world",
     transport: new DefaultChatTransport({
       api: "/api/chat",
       prepareSendMessagesRequest({ messages, id }) {

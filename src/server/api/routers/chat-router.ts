@@ -59,6 +59,12 @@ export type MyUIMessage = UIMessage<
   }
 >;
 
+export type ChatHistoryItem = {
+  id: string;
+  lastUpdated: string;
+  title: string;
+};
+
 export const chatRouter = createTRPCRouter({
   hello: publicProcedure
     .input(z.object({ text: z.string() }))
