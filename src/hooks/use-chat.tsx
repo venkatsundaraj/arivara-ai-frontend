@@ -34,9 +34,15 @@ export const ChatProvider = function ({
 }) {
   const defaultValue = nanoid();
   const [chatId, setChatId] = useState<string>(defaultValue);
-  const [userEmail, setUserEmail] = useState<string>();
+  const [histories, setHistories] = useState<{ messages: MyUIMessage[] }>();
   const params = useParams<{ id: string }>();
   const router = useRouter();
+  const session = useSession();
+
+  const { data } = api.chat.getChatHistories.useQuery(
+    { id: params.id as string },
+    { enabled: Boolean(params.id && session), refetchOnWindowFocus: false }
+  );
 
   const chatProps = useChat<MyUIMessage>({
     id: params.id ?? chatId,
@@ -50,10 +56,6 @@ export const ChatProvider = function ({
     onError: ({ message }) => {
       toast.error(message);
     },
-  });
-
-  const { data } = api.chat.getChatHistories.useQuery({
-    id: params.id as string,
   });
 
   const startNewMessage = useCallback(async function (text: string) {

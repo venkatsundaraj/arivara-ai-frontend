@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
     console.log("user-msg", userMessage);
 
     const messages = [...(history ?? []), userMessage] as MyUIMessage[];
-    console.log("msg", messages);
+
     const stream = createUIMessageStream<MyUIMessage>({
       originalMessages: messages,
       generateId: createIdGenerator({

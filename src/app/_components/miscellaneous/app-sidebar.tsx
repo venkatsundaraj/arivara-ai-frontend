@@ -1,43 +1,20 @@
+import { Icons } from "@/app/_components/miscellaneous/icons";
+import SigninButton from "@/app/_components/miscellaneous/signin-button";
+import { buttonVariants } from "@/app/_components/ui/button";
+import { Input } from "@/app/_components/ui/input";
 import {
   Sidebar,
-  SidebarContent,
   SidebarFooter,
-  SidebarGroup,
   SidebarHeader,
-  SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/app/_components/ui/sidebar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/app/_components/ui/dropdown-menu";
-import { FC } from "react";
-import { orgNavbarItems } from "@/config/marketing";
-import Link from "next/link";
-import { Icons } from "@/app/_components/miscellaneous/icons";
 import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/app/_components/ui/button";
-import { Input } from "@/app/_components/ui/input";
-import SigninButton from "@/app/_components/miscellaneous/signin-button";
-import { api } from "@/trpc/server";
+import Link from "next/link";
+import SidebarContentData from "@/app/_components/miscellaneous/sidebar-content";
 
 interface AppSidebarProps {}
 
 export const AppSidebar = async function ({}: AppSidebarProps) {
-  const result = await api.chat.getListofChats();
-  console.log("result", result);
-
   return (
     <Sidebar className="bg-background py-2">
       <SidebarHeader className="bg-background gap-2">
@@ -65,51 +42,7 @@ export const AppSidebar = async function ({}: AppSidebarProps) {
           />
         </SidebarMenuButton>
       </SidebarHeader>
-      <SidebarContent className="bg-background px-3 py-2 flex flex-col items-start justify-start gap-6">
-        <SidebarMenu className="flex-1">
-          {result.length && result
-            ? result.map((item, i) => {
-                return (
-                  <SidebarMenuItem key={i}>
-                    <SidebarMenuButton asChild className="">
-                      <Link
-                        href={`/chat/${item.id}`}
-                        className="text-extra-paragraph-headin cursor-pointer menu-item-group font-paragraph text-foreground leading-normal tracking-wide"
-                      >
-                        <span className="max-w-[85%] block truncate ">
-                          {item.title}
-                        </span>
-                        <DropdownMenu key={i}>
-                          <DropdownMenuTrigger
-                            className={cn(
-                              "opacity-0 menu-item-group-hover:opacity-100 menu-item-group-active:opacity-100"
-                            )}
-                          >
-                            <Icons.Ellipsis className="cursor-pointer stroke-1" />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent className="border-[0.5px] cursor-pointer">
-                            <DropdownMenuItem className="cursor-pointer">
-                              Rename
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">
-                              Delete
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">
-                              Pin
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">
-                              Share
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })
-            : null}
-        </SidebarMenu>
-      </SidebarContent>
+      <SidebarContentData />
       <SidebarFooter>
         <SigninButton />
       </SidebarFooter>
