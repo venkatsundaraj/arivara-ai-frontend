@@ -16,6 +16,7 @@ export const env = createEnv({
     UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
     VERCEL_URL: z.string().min(1),
     GROQ_API_KEY: z.string().min(1),
+    OPENROUTER_API_KEY: z.string().min(1),
   },
   client: {},
   runtimeEnv: {
@@ -30,5 +31,6 @@ export const env = createEnv({
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
     VERCEL_URL: process.env.VERCEL_URL,
     GROQ_API_KEY: process.env.GROQ_API_KEY,
+    OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
   },
 });

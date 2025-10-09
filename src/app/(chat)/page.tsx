@@ -4,6 +4,7 @@ import { Toaster } from "../_components/miscellaneous/sonner";
 
 import { redis } from "@/lib/redis";
 import ChatInputWrap from "../_components/chat/chat-input-wrap";
+import { ChatProvider } from "@/hooks/use-chat";
 
 interface pageProps {}
 
@@ -12,16 +13,18 @@ const page = async ({}: pageProps) => {
 
   return (
     <>
-      <section className="h-[90%] w-full flex flex-col gap-6 items-center justify-center bg-background">
-        <div className="container flex flex-col gap-6 items-center justify-center bg-background">
-          <h1 className="text-secondary-heading text-center text-foreground font-semibold leading-normal tracking-wide font-heading mb-8">
-            What's on your mind today?
-          </h1>
-          <ChatInputWrap />
-          <RecommendedTopics />
-        </div>
-      </section>
-      <Toaster />
+      <ChatProvider>
+        <section className="h-[90%] w-full flex flex-col gap-6 items-center justify-center bg-background">
+          <div className="container flex flex-col gap-6 items-center justify-center bg-background">
+            <h1 className="text-secondary-heading text-center text-foreground font-semibold leading-normal tracking-wide font-heading mb-8">
+              What's on your mind today?
+            </h1>
+            <ChatInputWrap />
+            <RecommendedTopics />
+          </div>
+        </section>
+        <Toaster />
+      </ChatProvider>
     </>
   );
 };

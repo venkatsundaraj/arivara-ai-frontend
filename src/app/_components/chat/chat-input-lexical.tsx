@@ -15,11 +15,13 @@ import {
   KEY_ENTER_COMMAND,
 } from "lexical";
 import { Icons } from "../miscellaneous/icons";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useChatContext } from "@/hooks/use-chat";
 import { useThemeProvider } from "@/hooks/use-theme";
 import { cn } from "@/lib/utils";
+import Messages from "./messages";
+import MessageSection from "./message-section";
 
 interface ChatInputBoxProps {
   onSubmit: (text: string) => void;
@@ -102,18 +104,27 @@ const ChatInputBox: FC<ChatInputBoxProps> = ({ onSubmit }) => {
 export { ChatInputBox };
 
 export const ChatInputLexical = function () {
-  const { sendMessage, ...res } = useChatContext();
+  const { sendMessage, startNewMessage, messages, status, ...res } =
+    useChatContext();
+  const params = useParams<{ id: string }>();
+  console.log(params.id);
+
   const handleSubmit = useCallback(async function (text: string) {
     if (!text.trim()) return;
 
-    sendMessage({ text: text });
+    startNewMessage(text);
   }, []);
 
   useEffect(() => {
-    console.log(res);
+    // console.log(res.messages, "frontend");
   }, [res]);
   return (
     <div className="w-full">
+      {/* <ChatInputTrpc mode="reply" chatId={param.id} /> */}
+      {messages.length && !params.id ? (
+        <MessageSection messages={messages} status={status} />
+      ) : null}
+      <div />
       <ChatInputBox onSubmit={handleSubmit} />
     </div>
   );

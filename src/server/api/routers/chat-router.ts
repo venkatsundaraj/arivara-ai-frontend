@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { email, z } from "zod";
 import { nanoid } from "nanoid";
 
 import {
@@ -11,6 +11,7 @@ import { auth } from "@/lib/auth";
 import { TRPCError } from "@trpc/server";
 import { UIMessage } from "ai";
 import { getCurrentUser } from "@/lib/session";
+import { redis } from "@/lib/redis";
 
 const data: { id: string; text: string; response: string }[] = [
   {
@@ -34,22 +35,23 @@ export type MyUIMessage = UIMessage<
   {
     "main-response": {
       text: string;
-      status: "steaming" | "completed";
+      status: "streaming" | "complete";
     };
     "tool-output": {
       text: string;
-      index: number;
-      status: "steaming" | "completed" | "processing";
+      status: "processing" | "streaming" | "complete";
     };
-    // writeTweet:{
-    //   status:'processing'
-    // }
+    "tool-reasoning": {
+      text: string;
+      status: "processing" | "reasoning" | "complete";
+    };
+    write_tweet: {
+      status: "processing";
+    };
   },
   {
-    readableWebsiteContent: {
-      input: {
-        website_url: string;
-      };
+    read_website_content: {
+      input: { website_url: string };
       output: {
         url: string;
         title: string;
@@ -122,5 +124,45 @@ export const chatRouter = createTRPCRouter({
     .input(z.object({ messages: z.any(), id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       console.log(input, "input");
+    }),
+
+  getChatHistories: privateProcedure
+    .input(z.object({ id: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      const { id } = input;
+      if (!id) {
+        return { messages: [] as MyUIMessage[] };
+      }
+
+      const messages = await redis.get<MyUIMessage[]>(`chat:history:${id}`);
+
+      if (!messages) {
+        return { messages: [] as MyUIMessage[] };
+      }
+
+      return { messages };
+    }),
+  checkIdFromEmail: privateProcedure
+    .input(z.object({ email: z.string(), id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      console.log(input);
+      const chatHistoryList = await redis.get<ChatHistoryItem[]>(
+        `chat:history-list:${email}`
+      );
+
+      if (!chatHistoryList || chatHistoryList.length === 0) {
+        throw new Error("there are no histories at the moment");
+      }
+      const filteredChat = chatHistoryList?.filter(
+        (item) => item.id === input.id
+      );
+
+      if (!filteredChat || filteredChat.length === 0) {
+        throw new Error(
+          "there are no histories at the moment, please enter the correct id"
+        );
+      }
+
+      return filteredChat;
     }),
 });

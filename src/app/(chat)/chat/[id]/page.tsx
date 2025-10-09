@@ -23,9 +23,6 @@ const page = async ({ params }: pageProps) => {
   return isEditMode ? (
     <section className="w-full h-full flex items-center justify-center ">
       <div className="container h-full flex-col flex items-center justify-between py-8">
-        {/* <Messages messages={messages} /> */}
-        {/* <ChatInputTrpc mode="reply" chatId={param.id} /> */}
-        <div />
         <ChatInputWrap />
       </div>
     </section>

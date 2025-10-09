@@ -13,7 +13,10 @@ import {
   convertToModelMessages,
   streamText,
   createUIMessageStream,
+  stepCountIs,
   createIdGenerator,
+  smoothStream,
+  createUIMessageStreamResponse,
 } from "ai";
 import { XmlPrompt } from "@/lib/xml-prompt";
 import { format } from "date-fns";
@@ -26,6 +29,10 @@ const messageSchema = z.object({
 const groq = createOpenAI({
   baseURL: "https://api.groq.com/openai/v1",
   apiKey: env.GROQ_API_KEY,
+});
+
+const openrouter = createOpenRouter({
+  apiKey: process.env.OPENROUTER_API_KEY,
 });
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -86,6 +93,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     content.open("message", { date: format(new Date(), "EEEE yyyy-MM-dd") });
     content.tag("user_message", userContent);
 
+    //i don't understand this.
     if (!history || history.length === 0) {
       const memories = await redis.lrange(`memories:${account.id}`, 0, -1);
 
@@ -110,6 +118,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         size: 16,
       }),
       onFinish: async ({ messages }) => {
+        console.log("messages", messages);
         await redis.set(`chat:history:${id}`, messages);
         await redis.del(`website_contents:${id}`);
 
@@ -127,26 +136,37 @@ export async function POST(req: NextRequest, res: NextResponse) {
           chatHistoryItem,
           ...existingHistory.filter((item) => item.id !== id),
         ]);
-
-        const result = await redis.get(historyKey);
-        console.log("result", result, "messages", messages);
       },
       onError(error) {
         console.log("Error", JSON.stringify(error, null, 2));
         throw new Error("Something went wrong");
       },
-      execute: async ({ writer }) => {},
-    });
+      execute: async ({ writer }) => {
+        const result = streamText({
+          model: openrouter.chat("openai/gpt-4.1", {
+            models: ["openai/gpt-4o"],
+            reasoning: { enabled: false, effort: "low" },
+          }),
+          messages: convertToModelMessages(messages),
+          stopWhen: stepCountIs(5),
+          experimental_transform: smoothStream({
+            delayInMs: 20,
+            chunking: /[^-]*---/,
+          }),
+        });
 
-    const result = await generateText({
-      model: groq("llama-3.1-8b-instant"),
-      messages: convertToModelMessages(messages),
+        writer.merge(result.toUIMessageStream());
+      },
     });
 
     // console.log("result", result.text); // This will log the actual text
 
-    return NextResponse.json({ text: result.text });
+    return createUIMessageStreamResponse({ stream });
   } catch (err) {
     console.log(err);
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Something went wrong" },
+      { status: 500 }
+    );
   }
 }
