@@ -60,7 +60,7 @@ export const MessageWrapper = memo(
               className={cn(
                 "space-y-5 rounded-2xl px-3",
                 isUser
-                  ? "bg-background p-3.5  w-fit justify-self-end text-primary border-primary border rounded-br-sm max-w-[80%]"
+                  ? "bg-white/90 p-3.5  w-fit justify-self-end text-primary border-primary border rounded-br-sm max-w-[80%]"
                   : "text-white bg-primary pt-3.5 rounded-bl-sm  max-w-[75%]"
               )}
             >
