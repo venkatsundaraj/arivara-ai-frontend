@@ -38,17 +38,8 @@ export const ChatProvider = function ({
   const params = useParams<{ id: string }>();
   const router = useRouter();
 
-  // useEffect(() => {
-  //   async function getAccount() {
-  //     const session = await authClient.getSession();
-  //     // console.log(session.data?.user.email);
-  //     setUserEmail(session.data?.user.email);
-  //   }
-  //   getAccount();
-  // }, []);
-
   const chatProps = useChat<MyUIMessage>({
-    id: chatId,
+    id: params.id ?? chatId,
     transport: new DefaultChatTransport({
       api: "/api/chat",
       prepareSendMessagesRequest({ messages, id }) {
@@ -61,7 +52,9 @@ export const ChatProvider = function ({
     },
   });
 
-  const { data } = api.chat.getChatHistories.useQuery({ id: params.id });
+  const { data } = api.chat.getChatHistories.useQuery({
+    id: params.id as string,
+  });
 
   const startNewMessage = useCallback(async function (text: string) {
     try {

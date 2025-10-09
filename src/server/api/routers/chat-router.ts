@@ -142,6 +142,17 @@ export const chatRouter = createTRPCRouter({
 
       return { messages };
     }),
+  getListofChats: privateProcedure.query(async ({ ctx }) => {
+    const chatHistoryList = await redis.get<ChatHistoryItem[]>(
+      `chat:history-list:${ctx.user.email}`
+    );
+
+    if (!chatHistoryList || chatHistoryList.length === 0) {
+      throw new Error("there are no histories at the moment");
+    }
+
+    return chatHistoryList;
+  }),
   checkIdFromEmail: privateProcedure
     .input(z.object({ email: z.string(), id: z.string() }))
     .query(async ({ ctx, input }) => {

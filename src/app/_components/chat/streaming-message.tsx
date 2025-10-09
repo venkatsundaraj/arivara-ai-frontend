@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, memo, useCallback } from "react";
 import ReactMarkdown, { Components } from "react-markdown";
 import { Markdown } from "../ui/markdown";
+import { ChatStatus } from "ai";
 
 export const useStream = () => {
   const [parts, setParts] = useState<string[]>([]);
@@ -31,7 +32,7 @@ export const useStream = () => {
   useEffect(() => {
     if (isAnimatingRef.current) return;
 
-    const typewriterSpeed = 5;
+    const typewriterSpeed = 0.1;
     const fullText = parts.join("");
 
     if (streamIndexRef.current >= fullText.length) {
@@ -72,10 +73,12 @@ export const StreamingMessage = memo(
     text,
     animate = false,
     markdown = false,
+    streaming,
   }: {
     text: string;
     animate?: boolean;
     markdown?: boolean;
+    streaming?: ChatStatus;
   }) => {
     const contentRef = useRef("");
     const { stream, addPart } = useStream();

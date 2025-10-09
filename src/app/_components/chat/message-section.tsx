@@ -1,6 +1,6 @@
 import { MyUIMessage } from "@/server/api/routers/chat-router";
 import { ChatStatus } from "ai";
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo, useRef } from "react";
 import { ChatContainerContent, ChatContainerRoot } from "../ui/chat-containers";
 import { MessageWrapper } from "./message-wrapper";
 import {
@@ -21,6 +21,18 @@ const MessageSection: FC<MessageSectionProps> = ({
   status,
   error,
 }) => {
+  const streamingMessageIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (status === "streaming" && messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.role === "assistant") {
+        streamingMessageIdRef.current = lastMessage.id;
+      }
+    } else if (status === "ready") {
+      streamingMessageIdRef.current = null;
+    }
+  }, [status, messages]);
   const lastUserMessageIndex = useMemo(() => {
     return messages.findLastIndex((data) => data.role === "user");
   }, [messages]);
@@ -42,10 +54,14 @@ const MessageSection: FC<MessageSectionProps> = ({
     );
   }, [error, status, messages]);
   return (
-    <ChatContainerRoot className="h-full overflow-y-hidden">
+    <ChatContainerRoot className="h-[78vh] w-full overflow-y-scroll scrollbar-hide">
       <ChatContainerContent className="space-y-6 px-4 pt-6 pb-6">
         {visibleMessages.map((message, index) => {
           const isUser = message.role === "user";
+
+          const isCurrentlyStreaming =
+            message.id === streamingMessageIdRef.current &&
+            status === "streaming";
 
           return (
             <div
@@ -88,8 +104,11 @@ const MessageSection: FC<MessageSectionProps> = ({
                     return (
                       <div className="whitespace-pre-wrap" key={i}>
                         <StreamingMessage
+                          streaming={status}
                           markdown
-                          animate={message.role === "assistant"}
+                          animate={
+                            message.role === "assistant" && isCurrentlyStreaming
+                          }
                           text={message.metadata?.userMessage || part.text}
                         />
                       </div>

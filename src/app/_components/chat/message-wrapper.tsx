@@ -50,20 +50,25 @@ export const MessageWrapper = memo(
             className
           )}
         >
-          <div className="w-full col-start-2 flex-1 space-y-2">
+          <div
+            className={cn(
+              "w-full flex  space-y-2",
+              isUser ? "justify-end" : "justify-start"
+            )}
+          >
             <div
               className={cn(
-                "space-y-5 rounded-2xl",
+                "space-y-5 rounded-2xl px-3",
                 isUser
-                  ? "bg-stone-800 p-3.5  w-fit justify-self-end text-white rounded-br-sm"
-                  : "text-gray-800 pt-3.5 rounded-bl-sm"
+                  ? "bg-background p-3.5  w-fit justify-self-end text-primary border-primary border rounded-br-sm max-w-[80%]"
+                  : "text-white bg-primary pt-3.5 rounded-bl-sm  max-w-[75%]"
               )}
             >
               {children}
               {!isUser && (
                 <div
                   className={cn(
-                    "invisible flex justify-end items-center gap-1",
+                    "invisible hidden justify-end items-center gap-1",
                     {
                       visible: Boolean(showOptions),
                     }

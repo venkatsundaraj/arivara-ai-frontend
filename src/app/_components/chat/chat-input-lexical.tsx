@@ -75,7 +75,7 @@ const ChatInputBox: FC<ChatInputBoxProps> = ({ onSubmit }) => {
     });
   };
   return (
-    <div className="flex w-full gap-6 items-center justify-center flex-col relative h-[90px]">
+    <div className="flex w-full gap-6 items-center justify-center flex-col relative h-[90px] overflow-y-scroll  justify-self-end">
       <PlainTextPlugin
         contentEditable={
           <ContentEditable
@@ -107,24 +107,25 @@ export const ChatInputLexical = function () {
   const { sendMessage, startNewMessage, messages, status, ...res } =
     useChatContext();
   const params = useParams<{ id: string }>();
-  console.log(params.id);
 
-  const handleSubmit = useCallback(async function (text: string) {
-    if (!text.trim()) return;
-
-    startNewMessage(text);
-  }, []);
+  const handleSubmit = useCallback(
+    async function (text: string) {
+      if (!text.trim()) return;
+      console.log(messages, "messages from the client");
+      startNewMessage(text);
+    },
+    [messages]
+  );
 
   useEffect(() => {
     // console.log(res.messages, "frontend");
   }, [res]);
   return (
-    <div className="w-full">
+    <div className="w-full h-full flex flex-col items-center justify-end">
       {/* <ChatInputTrpc mode="reply" chatId={param.id} /> */}
-      {messages.length && !params.id ? (
+      {messages.length && params.id ? (
         <MessageSection messages={messages} status={status} />
       ) : null}
-      <div />
       <ChatInputBox onSubmit={handleSubmit} />
     </div>
   );

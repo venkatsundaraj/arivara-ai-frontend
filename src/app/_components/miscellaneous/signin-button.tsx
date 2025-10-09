@@ -31,8 +31,7 @@ const SigninButton: FC<SigninButtonProps> = ({}) => {
 
   useEffect(() => {
     setIsMounted(true);
-    if (data?.user) {
-    }
+    console.log(data?.user.image, "session from the client");
   }, [isMounted, data]);
 
   const loginHandler = async function () {
@@ -53,9 +52,11 @@ const SigninButton: FC<SigninButtonProps> = ({}) => {
     <div className="w-full flex flex-row items-center justify-between">
       <div className="flex items-center justify-start gap-2.5">
         {data.user.image ? (
-          <img
+          <Image
             src={data.user.image}
             alt={"user profile"}
+            width={100}
+            height={100}
             className="w-8 h-8 rounded-full"
           />
         ) : null}
@@ -93,7 +94,7 @@ const SigninButton: FC<SigninButtonProps> = ({}) => {
       className={cn(buttonVariants({ variant: "outline" }), "gap-4")}
     >
       <Icons.LogIn className="w-20" />
-      <span className="text-extra-subtitle-heading text-foreground leading-normal tracking-normal font-paragraph">
+      <span className="text-extra-subtitle-heading text-foreground leading-normal tracking-normal font-paragraph cursor-pointer">
         Signin
       </span>
     </Button>

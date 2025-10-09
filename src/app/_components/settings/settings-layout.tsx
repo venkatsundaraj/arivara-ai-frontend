@@ -7,6 +7,7 @@ import Link from "next/link";
 import SettingsNavbar from "./settings-navbar";
 import { Icons } from "../miscellaneous/icons";
 import { getCurrentUser } from "@/lib/session";
+import Image from "next/image";
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
@@ -24,9 +25,12 @@ const SettingsLayout = async ({ children }: SettingsLayoutProps) => {
           <div className="flex flex-col items-center justify-start gap-3">
             <div className="flex flex-col items-center justify-center gap-4">
               {session?.user.image ? (
-                <img
+                <Image
                   src={session?.user.image}
                   className="w-44 h-44 rounded-full"
+                  alt={session?.user.name || "user profile"}
+                  width={300}
+                  height={300}
                 />
               ) : null}
               {session?.user.name ? (

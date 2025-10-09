@@ -50,7 +50,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     }
 
     const { id, message } = data as { id: string; message: MyUIMessage };
-    console.log(id, message);
+    // console.log(id, message);
 
     //ratelimiter
     const limiter =
@@ -103,14 +103,16 @@ export async function POST(req: NextRequest, res: NextResponse) {
     }
 
     content.close("message");
-
+    // not included the raw messages here.
     const userMessage: MyUIMessage = {
       ...message,
-      parts: [{ type: "text", text: content.toString() }],
+      parts: [{ type: "text", text: userContent }],
     };
 
-    const messages = [...(history ?? []), userMessage] as MyUIMessage[];
+    console.log("user-msg", userMessage);
 
+    const messages = [...(history ?? []), userMessage] as MyUIMessage[];
+    console.log("msg", messages);
     const stream = createUIMessageStream<MyUIMessage>({
       originalMessages: messages,
       generateId: createIdGenerator({
@@ -118,7 +120,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
         size: 16,
       }),
       onFinish: async ({ messages }) => {
-        console.log("messages", messages);
         await redis.set(`chat:history:${id}`, messages);
         await redis.del(`website_contents:${id}`);
 
@@ -147,6 +148,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             models: ["openai/gpt-4o"],
             reasoning: { enabled: false, effort: "low" },
           }),
+
           messages: convertToModelMessages(messages),
           stopWhen: stepCountIs(5),
           experimental_transform: smoothStream({
