@@ -1,11 +1,4 @@
-import ChatInput from "@/app/_components/chat/chat-input";
-import { ChatInputLexical } from "@/app/_components/chat/chat-input-lexical";
-import ChatInputTrpc from "@/app/_components/chat/chat-input-trpc";
 import ChatInputWrap from "@/app/_components/chat/chat-input-wrap";
-import ChatMainPage from "@/app/_components/chat/chat-main-page";
-import Messages from "@/app/_components/chat/messages";
-import { api } from "@/trpc/server";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
 
 interface pageProps {
   params: {
