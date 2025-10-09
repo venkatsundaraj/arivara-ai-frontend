@@ -98,4 +98,9 @@ export const auth = betterAuth({
       },
     },
   },
+  hooks: {
+    after: createAuthMiddleware(async (ctx) => {
+      ctx.redirect("/");
+    }),
+  },
 });

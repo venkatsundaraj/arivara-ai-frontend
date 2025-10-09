@@ -5,7 +5,7 @@ import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
   baseURL: env.NEXT_PUBLIC_BETTER_AUTH_URL,
-  plugins: [customSessionClient<typeof auth>()],
+  // plugins: [customSessionClient<typeof auth>()],
   fetchOptions: {
     onError: (e) => {
       console.log("Auth client error:", e.response, e.request);
