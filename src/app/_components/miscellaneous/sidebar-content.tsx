@@ -1,4 +1,6 @@
-import { FC } from "react";
+"use client";
+
+import { FC, useEffect, useState } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -30,14 +32,27 @@ import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/app/_components/ui/button";
 import { Input } from "@/app/_components/ui/input";
 import SigninButton from "@/app/_components/miscellaneous/signin-button";
-import { api } from "@/trpc/server";
-import { getCurrentUser } from "@/lib/session";
+import { api } from "@/trpc/react";
+
+import { authClient, useSession } from "@/lib/auth-client";
+import { User } from "@/server/db/schema";
 interface SidebarContentDataProps {}
 
-const SidebarContentData = async ({}: SidebarContentDataProps) => {
-  const session = await getCurrentUser();
+const SidebarContentData: FC<SidebarContentDataProps> = ({}) => {
+  const [user, setUser] = useState<User>();
+  const session = useSession();
 
-  if (!session?.user) {
+  useEffect(() => {
+    async function getData() {
+      const sessionRes = await authClient.getSession();
+      const currentUser = sessionRes.data?.user as User;
+      setUser(currentUser);
+    }
+    getData();
+  }, []);
+
+  console.log(user);
+  if (!user) {
     return (
       <SidebarContent className="bg-background px-3 py-2 flex flex-col items-center justify-center gap-6">
         <SidebarMenu className="flex-1 flex items-center justify-center text-center font-semibold font-heading text-foreground text-subtitle-heading ">
@@ -47,13 +62,52 @@ const SidebarContentData = async ({}: SidebarContentDataProps) => {
     );
   }
 
-  const result = await api.chat.getListofChats();
+  const {
+    data: chatHistory,
+    isLoading,
+    isError,
+  } = api.chat.getListofChats.useQuery(undefined, {
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
+
+  if (isLoading) {
+    return (
+      <SidebarContent className="bg-background px-3 py-2 flex flex-col items-center justify-center gap-6">
+        {" "}
+        │
+        <SidebarMenu
+          className="flex-1 flex items-center justify-center      
+      text-center font-semibold font-heading text-foreground text                  
+       -subtitle-heading"
+        >
+          <Icons.LoaderCircle className="animate-spin stroke-primary" />
+        </SidebarMenu>
+      </SidebarContent>
+    );
+  }
+
+  if (isError) {
+    return (
+      <SidebarContent className="bg-background px-3 py-2 flex flex-col items-center justify-center gap-6">
+        {" "}
+        │
+        <SidebarMenu
+          className="flex-1 flex items-center justify-center      
+      text-center font-semibold font-heading text-foreground text                  
+       -subtitle-heading"
+        >
+          Error loading chat history
+        </SidebarMenu>
+      </SidebarContent>
+    );
+  }
 
   return (
     <SidebarContent className="bg-background px-3 py-2 flex flex-col items-start justify-start gap-6">
       <SidebarMenu className="flex-1">
-        {result.length && result
-          ? result.map((item, i) => {
+        {chatHistory && chatHistory.length
+          ? chatHistory.map((item, i) => {
               return (
                 <SidebarMenuItem key={i}>
                   <SidebarMenuButton asChild className="">
@@ -62,7 +116,7 @@ const SidebarContentData = async ({}: SidebarContentDataProps) => {
                       className="text-extra-paragraph-headin cursor-pointer menu-item-group font-paragraph text-foreground leading-normal tracking-wide"
                     >
                       <span className="max-w-[85%] block truncate ">
-                        {item.title}
+                        {item.id}
                       </span>
                       <DropdownMenu key={i}>
                         <DropdownMenuTrigger

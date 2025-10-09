@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import SidebarContentData from "@/app/_components/miscellaneous/sidebar-content";
+import SidebarContentClient from "./sidebar-content-client";
 
 interface AppSidebarProps {}
 
@@ -42,7 +43,7 @@ export const AppSidebar = async function ({}: AppSidebarProps) {
           />
         </SidebarMenuButton>
       </SidebarHeader>
-      <SidebarContentData />
+      <SidebarContentClient />
       <SidebarFooter>
         <SigninButton />
       </SidebarFooter>

@@ -5,6 +5,7 @@ import { ModeToggle } from "@/app/_components/miscellaneous/toggle-theme";
 import { EditorProvider } from "@/hooks/use-editors";
 import { ChatProvider } from "@/hooks/use-chat";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import AccountProvider from "../_components/providers/account-provider";
 
 interface layoutProps {
   children: React.ReactNode;
@@ -27,26 +28,24 @@ const initialConfig = {
 
 const layout = async ({ children }: layoutProps) => {
   return (
-    <DashboardProvider>
-      {/* <LexicalComposer initialConfig={initialConfig}> */}
-      <EditorProvider>
-        {/* <ChatProvider> */}
-        <SidebarProvider>
-          <AppSidebar />
-          <main className="w-full bg-background flex flex-col items-center justify-start">
-            <nav className="w-full ">
-              <div className="flex items-center justify-between py-4 px-8">
-                <SidebarTrigger />
-                <ModeToggle />
-              </div>
-            </nav>
-            {children}
-          </main>
-        </SidebarProvider>
-        {/* </ChatProvider> */}
-      </EditorProvider>
-      {/* </LexicalComposer> */}
-    </DashboardProvider>
+    <AccountProvider>
+      <DashboardProvider>
+        <EditorProvider>
+          <SidebarProvider>
+            <AppSidebar />
+            <main className="w-full bg-background flex flex-col items-center justify-start">
+              <nav className="w-full ">
+                <div className="flex items-center justify-between py-4 px-8">
+                  <SidebarTrigger />
+                  <ModeToggle />
+                </div>
+              </nav>
+              {children}
+            </main>
+          </SidebarProvider>
+        </EditorProvider>
+      </DashboardProvider>
+    </AccountProvider>
   );
 };
 

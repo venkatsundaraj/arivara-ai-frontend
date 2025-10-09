@@ -9,7 +9,7 @@ import { ChatProvider } from "@/hooks/use-chat";
 interface pageProps {}
 
 const page = async ({}: pageProps) => {
-  const data = await api.post.hello({ text: "venkat" });
+  // const data = await api.post.hello({ text: "venkat" });
 
   return (
     <>

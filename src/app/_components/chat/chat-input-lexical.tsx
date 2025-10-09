@@ -1,27 +1,24 @@
 "use client";
-import { FC, useCallback, useEffect } from "react";
+import { useChatContext } from "@/hooks/use-chat";
+import { MultipleEditorPlugin } from "@/lib/lexical-plugins/multiple-editor-plugin";
+import { PlaceholderPlugin } from "@/lib/lexical-plugins/placeholder-plugin";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
-import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { PlaceholderPlugin } from "@/lib/lexical-plugins/placeholder-plugin";
-import { MultipleEditorPlugin } from "@/lib/lexical-plugins/multiple-editor-plugin";
-import { Button } from "../ui/button";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
   $createParagraphNode,
   $getRoot,
   COMMAND_PRIORITY_HIGH,
   KEY_ENTER_COMMAND,
 } from "lexical";
+import { useParams } from "next/navigation";
+import { FC, useCallback, useEffect } from "react";
 import { Icons } from "../miscellaneous/icons";
-import { useParams, useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
-import { useChatContext } from "@/hooks/use-chat";
-import { useThemeProvider } from "@/hooks/use-theme";
-import { cn } from "@/lib/utils";
-import Messages from "./messages";
+import { Button } from "../ui/button";
 import MessageSection from "./message-section";
+import { useAccount } from "../providers/account-provider";
 
 interface ChatInputBoxProps {
   onSubmit: (text: string) => void;
@@ -106,6 +103,7 @@ export { ChatInputBox };
 export const ChatInputLexical = function () {
   const { sendMessage, startNewMessage, messages, status, ...res } =
     useChatContext();
+
   const params = useParams<{ id: string }>();
 
   const handleSubmit = useCallback(
