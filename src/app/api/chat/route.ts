@@ -35,7 +35,7 @@ const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY,
 });
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const session = await getCurrentUser();
