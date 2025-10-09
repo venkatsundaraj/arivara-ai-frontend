@@ -20,28 +20,35 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { authClient, useSession } from "@/lib/auth-client";
 import { User } from "@/server/db/schema";
+import { useAccount } from "@/app/_components/providers/account-provider";
 
 interface ChatContextProps extends ReturnType<typeof useChat<MyUIMessage>> {
   startNewMessage: (text: string) => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextProps | null>(null);
-
+const defaultValue = nanoid();
 export const ChatProvider = function ({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const defaultValue = nanoid();
   const [chatId, setChatId] = useState<string>(defaultValue);
-  const [histories, setHistories] = useState<{ messages: MyUIMessage[] }>();
+  const [user, setUser] = useState<User>();
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const session = useSession();
+  const utils = api.useUtils();
+  const acc = useAccount();
 
   const { data } = api.chat.getChatHistories.useQuery(
     { id: params.id as string },
-    { enabled: Boolean(params.id && session), refetchOnWindowFocus: false }
+    {
+      enabled: Boolean(params.id && session),
+      refetchOnMount: true,
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const chatProps = useChat<MyUIMessage>({
@@ -58,40 +65,59 @@ export const ChatProvider = function ({
     },
   });
 
-  const startNewMessage = useCallback(async function (text: string) {
-    try {
-      console.log(params.id);
-      if (params.id) {
-        await chatProps.sendMessage({ text: text });
-      }
-      if (!params.id) {
-        setChatId(defaultValue);
-        console.log(defaultValue, chatId);
+  const startNewMessage = useCallback(
+    async function (text: string) {
+      try {
         if (!text) {
-          throw new Error("You have to enter the message");
+          toast.error("You have to enter the message", {
+            position: "top-center",
+          });
+          return;
         }
 
-        await chatProps.sendMessage({ text: text });
+        const sessionRes = await authClient.getSession();
+        const currentUser = sessionRes.data?.user as User;
+        setUser(currentUser);
 
-        return router.push(`/chat/${defaultValue}`);
+        if (!currentUser?.email) {
+          toast.error("Please authenticate...", { position: "top-center" });
+          return;
+        }
+        if (params.id) {
+          await chatProps.sendMessage({ text: text });
+          utils.chat.getListofChats.invalidate();
+        }
+        if (!params.id) {
+          setChatId(defaultValue);
+
+          await chatProps.sendMessage({ text: text });
+          utils.chat.getListofChats.invalidate();
+          return router.push(`/chat/${defaultValue}`);
+        }
+      } catch (err) {
+        console.log(err);
+        toast.error("something went wrong");
       }
 
-      // if (!data?.messages) {
-      //   throw new Error("Something went wrong");
-      // }
-    } catch (err) {
-      toast.error("something went wrong");
-    }
-
-    return Promise.resolve();
-  }, []);
+      return Promise.resolve();
+    },
+    [
+      acc,
+      session,
+      chatProps,
+      params.id,
+      utils.chat.getListofChats,
+      router,
+      defaultValue,
+    ]
+  );
 
   useEffect(() => {
     console.log(data?.messages);
     if (data?.messages) {
       chatProps.setMessages(data?.messages);
     }
-  }, [data]);
+  }, [data?.messages]);
 
   const context = useMemo(() => {
     return {

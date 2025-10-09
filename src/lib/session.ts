@@ -10,7 +10,7 @@ export const getCurrentUser = async function () {
     });
 
     if (!data) {
-      throw new Error("you should authenticate");
+      return;
     }
 
     return data;

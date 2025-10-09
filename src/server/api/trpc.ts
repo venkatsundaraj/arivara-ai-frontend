@@ -11,6 +11,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 import { db } from "@/server/db";
 import { getCurrentUser } from "@/lib/session";
+import { User } from "../db/schema";
 
 /**
  * 1. CONTEXT
@@ -110,6 +111,22 @@ const isAuth = t.middleware(async (opts) => {
   });
 });
 
+const isAuthWithoutUser = t.middleware(async (opts) => {
+  const user = await getCurrentUser();
+
+  // if (!user) {
+  //   return opts.next({
+  //     ctx: {},
+  //   });
+  // }
+
+  return opts.next({
+    ctx: {
+      ...user,
+    },
+  });
+});
+
 /**
  * Public (unauthenticated) procedure
  *
@@ -119,3 +136,4 @@ const isAuth = t.middleware(async (opts) => {
  */
 export const publicProcedure = t.procedure.use(timingMiddleware);
 export const privateProcedure = t.procedure.use(isAuth);
+export const publicProcedureWithUser = t.procedure.use(isAuthWithoutUser);

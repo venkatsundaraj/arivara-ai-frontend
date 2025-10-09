@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { id, message } = data as { id: string; message: MyUIMessage };
-    // console.log(id, message);
+    console.log(id, message);
 
     //ratelimiter
     const limiter =

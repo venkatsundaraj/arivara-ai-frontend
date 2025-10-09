@@ -6,9 +6,9 @@ export const userRouter = createTRPCRouter({
     const user = await getCurrentUser();
 
     if (!user) {
-      throw new Error("unauthorized");
+      return;
     }
-    if (!user.user || user.user.email) return;
-    return user.user.email;
+    if (!user.user) return;
+    return user.user;
   }),
 });

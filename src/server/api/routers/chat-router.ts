@@ -5,6 +5,7 @@ import {
   createTRPCRouter,
   privateProcedure,
   publicProcedure,
+  publicProcedureWithUser,
 } from "@/server/api/trpc";
 import { inputValidatorSchema } from "@/lib/validation/input-validator";
 import { auth } from "@/lib/auth";
@@ -142,16 +143,22 @@ export const chatRouter = createTRPCRouter({
 
       return { messages };
     }),
-  getListofChats: privateProcedure.query(async ({ ctx }) => {
-    const chatHistoryList = await redis.get<ChatHistoryItem[]>(
-      `chat:history-list:${ctx.user.email}`
-    );
+  getListofChats: publicProcedureWithUser.query(async ({ ctx }) => {
+    if (!ctx.user || !ctx.user?.email) {
+      return [];
+    }
+    if (ctx.user) {
+      const chatHistoryList = await redis.get<ChatHistoryItem[]>(
+        `chat:history-list:${ctx.user.email}`
+      );
+      if (!chatHistoryList || chatHistoryList.length === 0) {
+        return [];
+      }
 
-    if (!chatHistoryList || chatHistoryList.length === 0) {
-      throw new Error("there are no histories at the moment");
+      return chatHistoryList;
     }
 
-    return chatHistoryList;
+    return [];
   }),
   checkIdFromEmail: privateProcedure
     .input(z.object({ email: z.string(), id: z.string() }))

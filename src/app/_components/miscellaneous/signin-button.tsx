@@ -26,13 +26,15 @@ import { signIn, useSession } from "@/lib/auth-client";
 interface SigninButtonProps {}
 
 const SigninButton: FC<SigninButtonProps> = ({}) => {
-  const { data } = useSession();
+  const { data, isPending } = useSession();
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    if (!isPending) {
+      setIsMounted(true);
+    }
     console.log(data?.user.image, "session from the client");
-  }, [isMounted, data]);
+  }, [isMounted, data, isPending]);
 
   const loginHandler = async function () {
     const { data } = await signIn.social({
