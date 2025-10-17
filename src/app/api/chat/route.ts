@@ -127,9 +127,24 @@ export async function POST(req: NextRequest) {
         const existingHistory =
           (await redis.get<ChatHistoryItem[]>(historyKey)) || [];
 
+        const firstUserMessage = messages.find((m) => m.role === "user");
+        const userContent =
+          firstUserMessage?.parts
+            .filter((p) => p.type === "text")
+            .map((p) => p.text)
+            .join(" ") || "unnamed chat";
+
+        const tempTitle =
+          userContent.length > 60
+            ? userContent.slice(0, 60) + "..."
+            : userContent;
+
+        const existing = existingHistory.find((item) => item.id === id);
+        const title = existing?.title || tempTitle;
+
         const chatHistoryItem: ChatHistoryItem = {
           id,
-          title: messages[0].metadata?.userMessage || "unnamed chat",
+          title: title,
           lastUpdated: new Date().toISOString(),
         };
 

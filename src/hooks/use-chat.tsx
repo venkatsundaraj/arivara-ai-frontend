@@ -25,21 +25,21 @@ import { useAccount } from "@/app/_components/providers/account-provider";
 interface ChatContextProps extends ReturnType<typeof useChat<MyUIMessage>> {
   startNewMessage: (text: string) => Promise<void>;
 }
-
+const pendingMessages = new Map<string, string>();
 const ChatContext = createContext<ChatContextProps | null>(null);
-const defaultValue = nanoid();
+
 export const ChatProvider = function ({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [chatId, setChatId] = useState<string>(defaultValue);
-  const [user, setUser] = useState<User>();
+  const [chatId, setChatId] = useState<string>();
+
+  const [hasPending, setHasPending] = useState<boolean>(false);
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const session = useSession();
   const utils = api.useUtils();
-  const acc = useAccount();
 
   const { data } = api.chat.getChatHistories.useQuery(
     { id: params.id as string },
@@ -52,7 +52,7 @@ export const ChatProvider = function ({
   );
 
   const chatProps = useChat<MyUIMessage>({
-    id: params.id ?? chatId,
+    id: params.id ?? undefined,
     transport: new DefaultChatTransport({
       api: "/api/chat",
       prepareSendMessagesRequest({ messages, id }) {
@@ -77,10 +77,9 @@ export const ChatProvider = function ({
 
         const sessionRes = await authClient.getSession();
         const currentUser = sessionRes.data?.user as User;
-        setUser(currentUser);
 
         if (!currentUser?.email) {
-          toast.error("Please authenticate...", { position: "top-center" });
+          toast.error("Please authenticate", { position: "top-center" });
           return;
         }
         if (params.id) {
@@ -88,11 +87,14 @@ export const ChatProvider = function ({
           utils.chat.getListofChats.invalidate();
         }
         if (!params.id) {
+          const defaultValue = nanoid();
           setChatId(defaultValue);
-
-          await chatProps.sendMessage({ text: text });
-          utils.chat.getListofChats.invalidate();
-          return router.push(`/chat/${defaultValue}`);
+          toast.success("New chat has been created", {
+            position: "top-center",
+          });
+          pendingMessages.set(defaultValue, text);
+          // await chatProps.sendMessage({ text: text });
+          router.push(`/chat/${defaultValue}`);
         }
       } catch (err) {
         console.log(err);
@@ -101,20 +103,27 @@ export const ChatProvider = function ({
 
       return Promise.resolve();
     },
-    [
-      acc,
-      session,
-      chatProps,
-      params.id,
-      utils.chat.getListofChats,
-      router,
-      defaultValue,
-    ]
+    [chatProps, params.id, utils.chat.getListofChats, router]
   );
 
   useEffect(() => {
-    console.log(data?.messages);
-    if (data?.messages) {
+    if (!params.id || hasPending) return;
+    const pendingMessage = pendingMessages.get(params.id);
+    if (pendingMessage) {
+      setHasPending(true);
+
+      chatProps.sendMessage({ text: pendingMessage }).then(() => {
+        utils.chat.getListofChats.invalidate();
+        console.log("Message sent and chat list invalidated");
+      });
+
+      // Clean up the pending message
+      pendingMessages.delete(params.id);
+    }
+  }, [params.id, chatProps, utils.chat.getListofChats, hasPending]);
+
+  useEffect(() => {
+    if (data?.messages && data.messages.length > 0) {
       chatProps.setMessages(data?.messages);
     }
   }, [data?.messages]);
