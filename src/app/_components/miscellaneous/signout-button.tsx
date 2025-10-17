@@ -6,17 +6,20 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Icons } from "@/app/_components/miscellaneous/icons";
 import { authClient } from "@/lib/auth-client";
+import { api } from "@/trpc/react";
 
 interface SignoutButtonProps {}
 
 const SignoutButton: FC<SignoutButtonProps> = ({}) => {
   const router = useRouter();
+  const utils = api.useUtils();
   return (
     <Button
       onClick={async () => {
         await authClient.signOut({
           fetchOptions: {
             onSuccess: () => {
+              utils.chat.getListofChats.invalidate();
               router.push("/"); // Redirect to the login page
             },
           },

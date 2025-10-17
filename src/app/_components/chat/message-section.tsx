@@ -9,6 +9,8 @@ import {
   ReasoningTrigger,
 } from "../ai-elements/reasoning";
 import { StreamingMessage } from "./streaming-message";
+import { Icons } from "../miscellaneous/icons";
+import { LoadingMessage } from "./loading-message";
 
 interface MessageSectionProps {
   messages: MyUIMessage[];
@@ -22,6 +24,7 @@ const MessageSection: FC<MessageSectionProps> = ({
   error,
 }) => {
   const streamingMessageIdRef = useRef<string | null>(null);
+  console.log("status", status);
 
   useEffect(() => {
     if (status === "streaming" && messages.length > 0) {
@@ -119,6 +122,11 @@ const MessageSection: FC<MessageSectionProps> = ({
             </div>
           );
         })}
+        {showLoadingMessage && (
+          <div data-message-index={visibleMessages.length} data-loading="true">
+            <LoadingMessage status={status} />
+          </div>
+        )}
       </ChatContainerContent>
     </ChatContainerRoot>
   );

@@ -52,6 +52,25 @@ const SidebarContentClient: FC<SidebarContentClientProps> = ({}) => {
       </SidebarContent>
     );
   }
+  if (!chatHistory?.length) {
+    return (
+      <SidebarContent className="bg-background px-3 py-2 flex flex-col items-center justify-center gap-6">
+        <SidebarMenu className="flex-1 flex items-center justify-center text-center font-semibold font-heading text-foreground text-subtitle-heading">
+          No chat history has been created.
+        </SidebarMenu>
+      </SidebarContent>
+    );
+  }
+
+  if (isError) {
+    return (
+      <SidebarContent className="bg-background px-3 py-2 flex flex-col items-center justify-center gap-6">
+        <SidebarMenu className="flex-1 flex items-center justify-center text-center font-semibold font-heading text-foreground text-subtitle-heading">
+          Please login to check the histories
+        </SidebarMenu>
+      </SidebarContent>
+    );
+  }
 
   return (
     <SidebarContent className="bg-background px-3 py-2 flex flex-col items-start justify-start gap-6">
@@ -65,8 +84,8 @@ const SidebarContentClient: FC<SidebarContentClientProps> = ({}) => {
                     href={`/chat/${item.id}`}
                     className="text-extra-paragraph-headin cursor-pointer menu-item-group font-paragraph text-foreground leading-normal tracking-wide"
                   >
-                    <span className="max-w-[85%] block truncate">
-                      {item.id}
+                    <span className="max-w-[85%] w-full block truncate">
+                      {item.title}
                     </span>
                     <DropdownMenu>
                       <DropdownMenuTrigger
