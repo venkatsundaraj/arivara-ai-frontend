@@ -78,13 +78,13 @@ const SigninButton: FC<SigninButtonProps> = ({}) => {
             asChild
           >
             <Link
-              className="font-normal text-extra-subtitle-heading text-foreground"
+              className="font-normal text-[16px] text-foreground"
               href={"/settings/account"}
             >
               Profile
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer text-extra-subtitle-heading">
+          <DropdownMenuItem className="cursor-pointer text-[16px]">
             <SignoutButton />
           </DropdownMenuItem>
         </DropdownMenuContent>

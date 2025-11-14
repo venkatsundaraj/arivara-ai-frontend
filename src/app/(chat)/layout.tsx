@@ -6,6 +6,9 @@ import { EditorProvider } from "@/hooks/use-editors";
 import { ChatProvider } from "@/hooks/use-chat";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import AccountProvider from "../_components/providers/account-provider";
+import { getCurrentUser } from "@/lib/session";
+import Link from "next/link";
+import { Icons } from "../_components/miscellaneous/icons";
 
 interface layoutProps {
   children: React.ReactNode;
@@ -27,6 +30,7 @@ const initialConfig = {
 };
 
 const layout = async ({ children }: layoutProps) => {
+  const session = await getCurrentUser();
   return (
     <AccountProvider>
       <DashboardProvider>
@@ -37,7 +41,17 @@ const layout = async ({ children }: layoutProps) => {
               <nav className="w-full ">
                 <div className="flex items-center justify-between py-4 px-8">
                   <SidebarTrigger />
-                  <ModeToggle />
+                  <div className="flex items-center justify-center gap-4">
+                    {!session?.user ? null : (
+                      <Link
+                        href={"/settings/account"}
+                        className="hover:bg-background/80"
+                      >
+                        <Icons.Settings2 className="stroke-foreground w-4 h-8 " />
+                      </Link>
+                    )}
+                    <ModeToggle />
+                  </div>
                 </div>
               </nav>
               {children}
